@@ -1,0 +1,23 @@
+<template>
+  <view class="">
+    <likeButton></likeButton>
+  </view>
+</template>
+
+<script>
+  import likeButton from '@/components/like-button.vue'
+	export default {
+    components: {
+      likeButton
+    },
+		data() {
+			return {
+			}
+		},
+		methods: {
+		}
+	}
+</script>
+
+<style>
+</style>
