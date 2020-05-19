@@ -146,11 +146,11 @@
             console.log('animation finished.')
             // 完成后事件回调
             this.$emit('finished')
-            // 完成动画后在1秒后清空
+            // 完成动画后在n秒后清空
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
               this.viewList = []
-            }, 1000)
+            }, this.duration)
           })
           // #endif
         }, 0)
