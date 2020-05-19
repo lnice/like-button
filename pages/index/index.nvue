@@ -1,6 +1,8 @@
 <template>
-  <view class="">
-    <likeButton></likeButton>
+  <view class="zan">
+    <likeButton :throttle="0">
+      <button type="success">点赞</button>
+    </likeButton>
   </view>
 </template>
 
@@ -20,4 +22,8 @@
 </script>
 
 <style>
+  .zan {
+    margin: 500rpx 100rpx;
+    text-align: center;
+  }
 </style>
