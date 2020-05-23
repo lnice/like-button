@@ -82,6 +82,10 @@
         default: () => {
           return [30, 160] || { x: 30, y: 160 }
         }
+      },
+      large: { // 是否缩放冒泡
+        type: [Number, Boolean],
+        default: false
       }
     },
 		data() {
@@ -127,15 +131,18 @@
         // #endif
         // 执行动画
         setTimeout(() => {
+          let _n = 1
+          if (this.large) _n = typeof(this.large) === 'number' ? this.large : 2;
           // #ifndef APP-NVUE
-          _item.animation.translateY(-_dirY).translateX(_dirX).opacity(0).step()
+          _item.animation.translateY(-_dirY).translateX(_dirX).scale([_n, _n]).opacity(0).step()
           _item.animation = _item.animation.export()
           // #endif
           // #ifdef APP-NVUE
           let el = this.$refs[_item.elId][0];
+          clearTimeout(this.timer)
           _item.animation.transition(el, {
             styles: {
-              transform: `translate(${_dirX}rpx, -${_dirY}rpx)`,
+              transform: `translate(${_dirX}rpx, -${_dirY}rpx) scale(${_n}, ${_n}])`,
               transformOrigin: 'center center',
               opacity: 0
             },

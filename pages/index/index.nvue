@@ -1,6 +1,6 @@
 <template>
   <view class="zan">
-    <likeButton :throttle="0">
+    <likeButton :throttle="100" :large="2">
       <button type="success">点赞</button>
     </likeButton>
   </view>
