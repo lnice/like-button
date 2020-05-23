@@ -3,7 +3,7 @@
 #### 使用方法:
 在 **script** 中引用组件
 ```javascript
-import likeButton from '@/components/like-button.vue'
+import likeButton from '@/components/like-button/like-button.vue'
 export default {
     components: {likeButton}
 }
@@ -27,6 +27,7 @@ export default {
 | imgHeight  | Number  | 52  |  冒泡图标高度 |
 | throttle | Number  | 200  |  点击按钮 节流 |
 | site  | Array,Object  | [30, 160]  | 冒泡图片相对窗口x y坐标 |
+| large  | Number,Boolean  | false | 缩放冒泡，为true默认放大2 |
 #### 事件说明
 |  事件名称 | 说明  | 返回值  |
 | ------------ | ------------ | ------------ |
