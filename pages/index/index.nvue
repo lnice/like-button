@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import likeButton from '@/components/like-button.vue'
+  import likeButton from '@/components/like-button/like-button.vue'
 	export default {
     components: {
       likeButton
