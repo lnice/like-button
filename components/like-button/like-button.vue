@@ -134,7 +134,7 @@
           let _n = 1
           if (this.large) _n = typeof(this.large) === 'number' ? this.large : 2;
           // #ifndef APP-NVUE
-          _item.animation.translateY(-_dirY).translateX(_dirX).scale([_n, _n]).opacity(0).step()
+          _item.animation.translateY(-_dirY).translateX(_dirX).scale(_n, _n).opacity(0).step()
           _item.animation = _item.animation.export()
           // #endif
           // #ifdef APP-NVUE
