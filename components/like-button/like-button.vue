@@ -128,6 +128,13 @@
           duration: this.duration,
           timingFunction: 'ease-out',
         })
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          console.log('animation finished.')
+          // 完成后事件回调
+          this.viewList = []
+          this.$emit('finished')
+        }, this.duration)
         // #endif
         // 执行动画
         setTimeout(() => {
