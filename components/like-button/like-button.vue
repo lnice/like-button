@@ -167,7 +167,7 @@
             }, this.duration)
           })
           // #endif
-        }, 0)
+        }, 100)
         // 点击立即触发组件事件
         this.$emit('handleClick', this.elId)
 			}
