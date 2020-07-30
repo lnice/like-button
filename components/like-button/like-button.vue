@@ -4,7 +4,7 @@
       <view
         class="a-img" 
         v-for="(item,index) in viewList" 
-        :key="index" 
+        :key="item.elId" 
         :ref="item.elId"
         :style="{
           'right': site.x || site[0] + 'rpx',
@@ -86,6 +86,10 @@
       large: { // 是否缩放冒泡
         type: [Number, Boolean],
         default: false
+      },
+      alone: {
+        type: Boolean,
+        default: true
       }
     },
 		data() {
@@ -98,6 +102,7 @@
 		},
 		methods: {
 			handleClick (e) {
+        console.log(this.viewList.length)
 				// 函数节流
         let interval = e.timeStamp - this.oldTime
 				if(interval < this.throttle) return null;
@@ -132,8 +137,11 @@
         this.timer = setTimeout(() => {
           console.log('animation finished.')
           // 完成后事件回调
-          this.viewList = []
           this.$emit('finished')
+          // 逐渐消失
+          if (this.alone) return this.viewList.splice(0, 1);
+          // 完成动画后清空
+          this.viewList = []
         }, this.duration)
         // #endif
         // 执行动画
@@ -160,6 +168,8 @@
             console.log('animation finished.')
             // 完成后事件回调
             this.$emit('finished')
+            // 逐渐消失
+            if (this.alone) return this.viewList.splice(0, 1);
             // 完成动画后在n秒后清空
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
