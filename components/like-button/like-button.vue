@@ -133,15 +133,17 @@
           duration: this.duration,
           timingFunction: 'ease-out',
         })
-        clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
+        setTimeout(() => {
           console.log('animation finished.')
           // 完成后事件回调
           this.$emit('finished')
           // 逐渐消失
           if (this.alone) return this.viewList.splice(0, 1);
-          // 完成动画后清空
-          this.viewList = []
+          // 完成动画后在n秒后清空
+          clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            this.viewList = []
+          }, this.duration)
         }, this.duration)
         // #endif
         // 执行动画

@@ -28,13 +28,14 @@ export default {
 | throttle | Number  | 200  |  点击按钮 节流 |
 | site  | Array,Object  | [30, 160]  | 冒泡图片相对窗口x y坐标 |
 | large  | Number,Boolean  | false | 缩放冒泡，为true默认放大2 |
+| alone  | Boolean  | true | 1.0.9-新增, DOM元素逐渐消失 |
 #### 事件说明
 |  事件名称 | 说明  | 返回值  |
 | ------------ | ------------ | ------------ |
 | handleClick | 点击按钮触发事件 | 冒泡元素id |
 | finished | 动画执行完成回调 | - |
 
-
+PS:使用定时器触发可用 this.$refs.likeButton.handleClick({timeStamp: Date.now()})。
 
 ---
 ### End
