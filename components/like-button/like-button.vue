@@ -1,21 +1,41 @@
 <template>
   <view class="like-button">
-    <view class="animate-wrap">
-      <view
-        class="a-img" 
-        v-for="(item,index) in viewList" 
-        :key="item.elId" 
-        :ref="item.elId"
-        :style="{
-          'right': site.x || site[0] + 'rpx',
-          'bottom': site.y || site[1] + 'rpx'
-        }">
-        <image :style="{
-          'width': imgWidth + 'rpx',
-          'height': imgHeight + 'rpx'
-        }" mode="widthFix" :src="item.src" :animation="item.animation"></image>
+    <!-- #ifdef APP-NVUE -->
+      <list class="animate-wrap">
+        <cell
+          class="a-img" 
+          v-for="(item,index) in viewList" 
+          :key="item.elId" 
+          :ref="item.elId"
+          :style="{
+            'right': site.x || site[0] + 'rpx',
+            'bottom': site.y || site[1] + 'rpx'
+          }">
+          <image :style="{
+            'width': imgWidth + 'rpx',
+            'height': imgHeight + 'rpx'
+          }" mode="widthFix" :src="item.src" :animation="item.animation"></image>
+        </cell>
+      </list>
+    <!-- #endif -->
+    <!-- #ifndef APP-NVUE -->
+      <view class="animate-wrap">
+        <view
+          class="a-img" 
+          v-for="(item,index) in viewList" 
+          :key="item.elId" 
+          :ref="item.elId"
+          :style="{
+            'right': site.x || site[0] + 'rpx',
+            'bottom': site.y || site[1] + 'rpx'
+          }">
+          <image :style="{
+            'width': imgWidth + 'rpx',
+            'height': imgHeight + 'rpx'
+          }" mode="widthFix" :src="item.src" :animation="item.animation"></image>
+        </view>
       </view>
-    </view>
+    <!-- #endif -->
     <view class="on-button">
       <image :src="src" mode="widthFix" :style="{
         'width': width + 'rpx',
@@ -97,12 +117,14 @@
 				viewList: [], // 渲染元素
         elId: 0, // 元素渲染id
 				oldTime: 0, // 全局时间用于函数节流
-        timer: null // 定时器
+        timer: null, // 定时器
+        waitDeleteIndex: 0
 			}
 		},
+    watch: {
+    },
 		methods: {
 			handleClick (e) {
-        console.log(this.viewList.length)
 				// 函数节流
         let interval = e.timeStamp - this.oldTime
 				if(interval < this.throttle) return null;
@@ -127,7 +149,7 @@
         let _dirY = this.high - Math.random() * 10
         // 生成DOM
 				this.elId ++
-				this.viewList.push(_item)
+        this.viewList.push(_item)
         // #ifndef APP-NVUE
         _item.animation = uni.createAnimation({
           duration: this.duration,
@@ -138,57 +160,80 @@
           // 完成后事件回调
           this.$emit('finished')
           // 逐渐消失
-          if (this.alone) return this.viewList.splice(0, 1);
-          // 完成动画后在n秒后清空
-          clearTimeout(this.timer)
-          this.timer = setTimeout(() => {
-            this.viewList = []
-          }, this.duration)
+          if (this.alone) {
+            this.waitDeleteIndex ++
+            this.onThrottle(this.deleteView, this.duration)
+            return null;
+          } else {
+            // 完成动画后在n秒后清空
+            clearTimeout(this.timer)
+            this.timer = setTimeout(() => {
+              this.viewList = []
+            }, this.duration)
+            return null;
+          }
         }, this.duration)
         // #endif
         // 执行动画
+        
         setTimeout(() => {
-          let _n = 1
-          if (this.large) _n = typeof(this.large) === 'number' ? this.large : 2;
-          // #ifndef APP-NVUE
-          _item.animation.translateY(-_dirY).translateX(_dirX).scale(_n, _n).opacity(0).step()
-          _item.animation = _item.animation.export()
-          // #endif
-          // #ifdef APP-NVUE
-          let el = this.$refs[_item.elId][0];
-          clearTimeout(this.timer)
-          _item.animation.transition(el, {
-            styles: {
-              transform: `translate(${_dirX}rpx, -${_dirY}rpx) scale(${_n}, ${_n}])`,
-              transformOrigin: 'center center',
-              opacity: 0
-            },
-            duration: this.duration, // ms
-            timingFunction: 'ease-out',
-            delay: 0 // ms
-          }, () => {
-            console.log('animation finished.')
-            // 完成后事件回调
-            this.$emit('finished')
-            // 逐渐消失
-            if (this.alone) {
-              setTimeout(() => {
-                this.viewList.splice(0, 1)
-              }, 0)
-              return null
-            } else {
-              // 完成动画后在n秒后清空
-              clearTimeout(this.timer)
-              this.timer = setTimeout(() => {
-                this.viewList = []
-              }, this.duration)
-            }
+          this.$nextTick(() => {
+            let _n = 1
+            if (this.large) _n = typeof(this.large) === 'number' ? this.large : 2;
+            // #ifndef APP-NVUE
+            _item.animation.translateY(-_dirY).translateX(_dirX).scale(_n, _n).opacity(0).step()
+            _item.animation = _item.animation.export()
+            // #endif
+            // #ifdef APP-NVUE
+            let el = this.$refs[_item.elId][0];
+            clearTimeout(this.timer)
+            _item.animation.transition(el, {
+              styles: {
+                transform: `translate(${_dirX}rpx, -${_dirY}rpx) scale(${_n}, ${_n}])`,
+                transformOrigin: 'center center',
+                opacity: 0
+              },
+              duration: this.duration, // ms
+              timingFunction: 'ease-out',
+              delay: 0 // ms
+            }, () => {
+              console.log('animation finished.')
+              // 完成后事件回调
+              this.$emit('finished')
+              // 逐渐消失
+              if (this.alone) {
+                this.waitDeleteIndex ++
+                this.onThrottle(this.deleteView, this.duration)
+                return null
+              } else {
+                // 完成动画后在n秒后清空
+                clearTimeout(this.timer)
+                this.timer = setTimeout(() => {
+                  this.viewList = []
+                }, this.duration)
+              }
+            })
+            // #endif
           })
-          // #endif
-        }, 100)
+        }, 0)
         // 点击立即触发组件事件
         this.$emit('handleClick', this.elId)
-			}
+			},
+      deleteView () {
+        this.viewList.splice(0, this.waitDeleteIndex)
+        this.waitDeleteIndex = 0
+      },
+      onThrottle (fn, delay) {
+        let verifi = true
+        return () => {
+          if (!verifi) return false;
+          verifi = false
+          setTimeout(() => {
+            fn()
+            verifi = true
+          }, delay)
+        }
+      }
 		}
 	}
 </script>
