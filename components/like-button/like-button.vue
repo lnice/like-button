@@ -162,7 +162,7 @@
           // 逐渐消失
           if (this.alone) {
             this.waitDeleteIndex ++
-            this.onThrottle(this.deleteView, this.duration)
+            this.onThrottle(this.deleteView, this.duration)()
             return null;
           } else {
             // 完成动画后在n秒后清空
@@ -203,7 +203,7 @@
               // 逐渐消失
               if (this.alone) {
                 this.waitDeleteIndex ++
-                this.onThrottle(this.deleteView, this.duration)
+                this.onThrottle(this.deleteView, this.duration)()
                 return null
               } else {
                 // 完成动画后在n秒后清空
